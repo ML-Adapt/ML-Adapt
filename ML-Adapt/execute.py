@@ -12,7 +12,7 @@ def scale_kubernetes_put(request_format, microservice):
 
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6Ik1ySEgtX3ZrRHhnWUM2VU91Y2JYenBwRDBVVEZSamQ4d3JoWDctWllRQWsifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImFkbWluLXVzZXItdG9rZW4tejRjcTciLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiYWRtaW4tdXNlciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImFlNDBhZTdjLThhMTYtNGI0My05ZmUxLTM1OTJmYjYwNzEyNiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmFkbWluLXVzZXIifQ.FSnOXq88eQfnRrnuNnjfDOmJzDEfBXs0HqNlIDH2-veOmS6jnwNlRffHFObQPE4SZYToH7Szg0-cBq4JkCFu8bPZBsBpKOFzzp---FWKxqwqpNfDI0ll8P9CBX3Sad6y9EGEZgWOljXvcdB7WhNlcACxP2BT3IOtB9lLwLDkXLjRW-bGG2OIZZTMqf5gHd9z4M-hpZdb6Zw8apjWqgCV-Le1ejfEFSFgriuIspTJGOlTYDjYNC0U-GYdR2K9ddtjkDBdkePJXAHuWd2kVy0cAveoteIp_WJgWm8Fb-oRa9CYuxqrhp4FGM_49d4vPVGBmgky0C4OR_cQgQT1xYOzeQ',
+        'Authorization': 'Bearer ',
         'Accept': 'application/json',
     }
 
