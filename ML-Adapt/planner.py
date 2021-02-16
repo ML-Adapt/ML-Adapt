@@ -33,13 +33,13 @@ def is_available(data, time_between_actions):
 
 def update_and_collect_the_blocked_by_time(deployment, id_scale):
     if id_scale <= -1:
-        if is_available(SCALE_DOWN_TIME[deployment], 300):  # Turn off Successive Adaptations Containment = 0
+        if is_available(SCALE_DOWN_TIME[deployment], 0):  # Turn off Successive Adaptations Containment = 0
             SCALE_DOWN_TIME[deployment][0] = 0
             SCALE_DOWN_TIME[deployment][1] = 0.0
 
             return True
     elif id_scale >= 1:
-        if is_available(SCALE_UP_TIME[deployment], 180):  # Turn off Successive Adaptations Containment = 0
+        if is_available(SCALE_UP_TIME[deployment], 0):  # Turn off Successive Adaptations Containment = 0
             SCALE_UP_TIME[deployment][0] = 0
             SCALE_UP_TIME[deployment][1] = 0.0
 
@@ -89,18 +89,21 @@ def calc_desired_replicas(values_of_microservice):
             current_replicas (int): Number current of replicas of microservice.
     """
     from math import ceil
+    
     ratio = values_of_microservice[0]
     request_format = values_of_microservice[1]
     current_replicas = request_format['spec']['replicas']
 
     desired_replicas = ceil(current_replicas * ratio)
+
     if ratio < 0.9:
         id_scale = desired_replicas - current_replicas
         return id_scale, request_format, current_replicas
     elif ratio > 1.1:
         id_scale = desired_replicas - current_replicas
         return id_scale, request_format, current_replicas
-
+    else:
+        return 0, request_format, current_replicas
 
 def plan_adaptive_actions(analysis_report):
     """Plans a set of actions to be carried out in the execution phase to deal with problems in microservices.
@@ -117,7 +120,9 @@ def plan_adaptive_actions(analysis_report):
     adaptation_plans = []
     for name_microservice, values_of_microservice in analysis_report.items():
         deployment = name_microservice
+        #############################try:
         id_scale, request_format, current_replicas = calc_desired_replicas(values_of_microservice)
+
 
         # Is the microservice blocked by the Successive Adaptations Containment?
         if update_and_collect_the_blocked_by_time(deployment, id_scale):  #
@@ -131,7 +136,7 @@ def plan_adaptive_actions(analysis_report):
                     insert_in_the_blocked_by_time(deployment, id_scale)
                     reset_in_quarantine(deployment, id_scale)
                     adaptation_plans.append([deployment, id_scale, request_format])
-                elif id_scale >= 1 and current_replicas <= 10:  # Is it possible to scaling-out?
+                elif id_scale >= 1 and current_replicas <= 20:  # Is it possible to scaling-out?
                     insert_in_the_blocked_by_time(deployment, id_scale)
                     reset_in_quarantine(deployment, id_scale)
                     adaptation_plans.append([deployment, id_scale, request_format])

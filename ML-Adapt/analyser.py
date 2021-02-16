@@ -17,6 +17,7 @@ def analysing_proactive_per_microservice(microservices_information):
     for microservice_name, microservice_values in microservices_information.items():
         microservices_information[microservice_name] = [resource_prediction(microservice_name, microservice_values[0]),
                                                         microservice_values[1]]
+        #print(microservice_name, microservices_information[microservice_name][0])
     return calculation_microservice_proportion(microservices_information)
 
 
@@ -32,16 +33,17 @@ def resource_prediction(microservice_name, microservice_consumption):
     """
     from knowledge import load_model, normalize, denormalize
 
-    model = load_model('models/' + microservice_name + '_mlp')
+    #model = load_model('models/increasing/' + microservice_name + '_svr')
+    model = load_model('models/increasing/rf_' + microservice_name)
     normalize_value = normalize(microservice_name, microservice_consumption)
 
     # If the model is MLP, RF or SVR.
     value_predict = model.predict(normalize_value)
 
     # If the model is XGBoost
-    # import xgboost
-    # normalize_value = xgboost.DMatrix(normalize_value)
-    # value_predict = model.predict(normalize_value, ntree_limit=model.best_ntree_limit)
+    #import xgboost
+    #normalize_value = xgboost.DMatrix(normalize_value)
+    #value_predict = model.predict(normalize_value, ntree_limit=model.best_ntree_limit)
 
     return denormalize(microservice_name, value_predict)
 

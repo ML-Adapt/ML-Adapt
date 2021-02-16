@@ -1,14 +1,16 @@
 MICROSERVICES = ['adservice', 'cartservice', 'checkoutservice', 'currencyservice', 'emailservice', 'frontend',
-                 'paymentservice', 'productcatalogservice', 'recommendationservice', 'redis-cart', 'shippingservice']
+                 'paymentservice', 'productcatalogservice', 'recommendationservice', 'shippingservice']
 
 METRICS = {
-    'usage_per_deployment':
+    'usage_per_deployment2':
         '(avg(sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace="default"}*'
         'on(namespace,pod)group_left(workload,workload_type)mixin_pod_workload{namespace="default",workload="",'
-        'workload_type="deployment"})by(pod))*1000)'
+        'workload_type="deployment"})by(pod))*1000)',
+    'usage_per_deployment':
+        '((sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_rate{namespace="default"}*on(namespace,pod)group_left(workload,workload_type)namespace_workload_pod:kube_pod_owner:relabel{namespace="default", workload_type="deployment", workload=""})/sum(kube_pod_container_resource_requests_cpu_cores{namespace="default"}* on(namespace,pod) group_left(workload, workload_type) namespace_workload_pod:kube_pod_owner:relabel{namespace="default", workload_type="deployment", workload=""}))*100)'
 }
 
-PROMETHEUS_URL = 'http://10.66.66.53:9090/api/v1/query?query='
+PROMETHEUS_URL = 'http://10.66.66.53:30002/api/v1/query?query='
 
 
 def usage_of_microservices(range_vector):
@@ -71,8 +73,9 @@ def usage_per_microservice(microservice, range_vector):
 
     """
     url_request_prometheus_api = PROMETHEUS_URL + METRICS['usage_per_deployment'][
-                                                  0:202] + microservice + METRICS['usage_per_deployment'][
-                                                                          202:] + range_vector
+                                                  0:255] + microservice + METRICS['usage_per_deployment'][
+                                                                          255:491] + microservice + METRICS['usage_per_deployment'][
+                                                                          491:] + range_vector
     return request_prometheus_api(url_request_prometheus_api, range_vector)
 
 
@@ -131,16 +134,7 @@ def collect_number_of_microservice_replicas(microservice):
 
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6Ikh6X3dLYVhCSHN0aHBEU0tpWUVnTGc1ZWExdnlfbUpfeGhfMGEwQ19taD'
-                         'AifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9u'
-                         'YW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJhZ'
-                         'G1pbi11c2VyLXRva2VuLWpiYjlzIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubm'
-                         'FtZSI6ImFkbWluLXVzZXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJ'
-                         'jNGJjYTAwYS1jMmIxLTQ4YTMtODM0Mi1jYWQ5Y2RlMjczYWUiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3Vi'
-                         'ZS1zeXN0ZW06YWRtaW4tdXNlciJ9.U46SgrzKg4ad7bexbRVm4H7D6IB0H4mLLVXt7FNwQIkrSpj43djTfc3LovabMwKL'
-                         'j-atTDSk_gNwPRRc8F-lZkSc6zLsqjI3t7c_e6qBU9ElXuZB2rlz-nJRNPYwastOz7Teqb0lxWJ_pB9PcwkmD1wMjiy71'
-                         'QNIejHWwVRBmqlryE-wSVGLM5xHDkKx6iHhRijS4VZlW8dnCgGa1AX-Hi9LRsjZ86vbXs71LRweaqo-QVp5Pg9WvogIt7'
-                         '1bf9FcH2o7OJltphMt7w6N64Zi3E97-DhhhF9bByBx7cvvZcHfjCrM0fdWghO54v3byBYUY7MaLnx5A-dGbcmqTJlBOg',
+        'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6Ik1ySEgtX3ZrRHhnWUM2VU91Y2JYenBwRDBVVEZSamQ4d3JoWDctWllRQWsifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImFkbWluLXVzZXItdG9rZW4tejRjcTciLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiYWRtaW4tdXNlciIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImFlNDBhZTdjLThhMTYtNGI0My05ZmUxLTM1OTJmYjYwNzEyNiIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmFkbWluLXVzZXIifQ.FSnOXq88eQfnRrnuNnjfDOmJzDEfBXs0HqNlIDH2-veOmS6jnwNlRffHFObQPE4SZYToH7Szg0-cBq4JkCFu8bPZBsBpKOFzzp---FWKxqwqpNfDI0ll8P9CBX3Sad6y9EGEZgWOljXvcdB7WhNlcACxP2BT3IOtB9lLwLDkXLjRW-bGG2OIZZTMqf5gHd9z4M-hpZdb6Zw8apjWqgCV-Le1ejfEFSFgriuIspTJGOlTYDjYNC0U-GYdR2K9ddtjkDBdkePJXAHuWd2kVy0cAveoteIp_WJgWm8Fb-oRa9CYuxqrhp4FGM_49d4vPVGBmgky0C4OR_cQgQT1xYOzeQ',
         'Accept': 'application/json',
     }
 
